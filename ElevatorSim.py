@@ -3,6 +3,8 @@
 # Cumulative Task
 
 # https://ehmatthes.github.io/pcc_2e/beyond_pcc/pygame_sprite_sheets/
+# https://github.com/BorisScotia/ElevatorSim
+
 
 
 import sys
@@ -30,6 +32,10 @@ class ElevatorSimulator:
         self.elevator_images = ElevatorAssets(self)
         self.elevator = Elevator(self)
         self.service_elevator = Elevator(self)
+
+        #Add Elevator states
+        for image in self.elevator_images.elevators:
+            self.elevator.state_images.append(image)
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -92,9 +98,8 @@ class ElevatorSimulator:
         self.service_elevator.y = 400
         self.service_elevator.blitme()'''
 
-        for image in self.elevator_images.elevators:
-            self.elevator.state_images.append(image)
-            
+        
+
         if self.elevator.image != self.elevator.state_images[0]:
             self.elevator.image = self.elevator.state_images[0]
 
