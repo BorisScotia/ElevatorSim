@@ -34,8 +34,8 @@ class ElevatorSimulator:
     def run_game(self):
         """Start the main loop for the game."""
         while True:
-            self.check_events()
             self.update_screen()
+            self.check_events()
 
     def check_events(self):
         for event in pygame.event.get():
@@ -94,7 +94,9 @@ class ElevatorSimulator:
 
         for image in self.elevator_images.elevators:
             self.elevator.state_images.append(image)
-        self.elevator.image = self.elevator.state_images[0]
+            
+        if self.elevator.image != self.elevator.state_images[0]:
+            self.elevator.image = self.elevator.state_images[0]
 
         self.service_elevator = copy(self.elevator)
 
