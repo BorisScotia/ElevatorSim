@@ -11,6 +11,8 @@ import sys
 
 import pygame
 
+import time
+
 from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
 from settings import Settings
@@ -35,7 +37,11 @@ class ElevatorSimulator:
 
         #Add Elevator states
         for image in self.elevator_images.elevators:
+            image = pygame.transform.scale(image, (100, 100))
             self.elevator.state_images.append(image)
+
+        self.elevator.image = self.elevator.state_images[0]
+        self.service_elevator = copy(self.elevator)
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -68,9 +74,18 @@ class ElevatorSimulator:
                                 self.service_elevator.floor_requests.append(button.value)
 
                     if self.elevator.rect.collidepoint(pos):
-                        print("Yes")
-                        self.elevator.image = self.elevator.state_images[2]
-                        self.elevator.blitme()
+                        #print("Yes")
+                        if self.elevator.image == self.elevator.state_images[0]:
+                            self.open_animation(self.elevator)
+                        else:
+                            self.close_animation(self.elevator)
+
+                    elif self.service_elevator.rect.collidepoint(pos):
+                        if self.service_elevator.image == self.elevator.state_images[0]:
+                            self.open_animation(self.service_elevator)
+                        else:
+                            self.close_animation(self.service_elevator)
+
 
 
     def update_screen(self):
@@ -100,10 +115,6 @@ class ElevatorSimulator:
 
         
 
-        if self.elevator.image != self.elevator.state_images[0]:
-            self.elevator.image = self.elevator.state_images[0]
-
-        self.service_elevator = copy(self.elevator)
 
 
 
@@ -117,9 +128,37 @@ class ElevatorSimulator:
         self.service_elevator.y = 400
         self.service_elevator.blitme()
 
+
+
         self.elevator.movement()
         self.service_elevator.movement()
         pygame.display.flip()
+
+    def open_animation(self, elevator):
+        elevator.image = self.elevator.state_images[2]
+        elevator.blitme()
+        self.update_screen()
+        time.sleep(1)
+        elevator.image = self.elevator.state_images[3]
+        elevator.blitme()
+        self.update_screen()
+        time.sleep(1)
+        elevator.image = self.elevator.state_images[1]
+        elevator.blitme()
+        self.update_screen()
+
+    def close_animation(self, elevator):
+        elevator.image = self.elevator.state_images[3]
+        elevator.blitme()
+        self.update_screen()
+        time.sleep(1)
+        elevator.image = self.elevator.state_images[2]
+        elevator.blitme()
+        self.update_screen()
+        time.sleep(1)
+        elevator.image = self.elevator.state_images[0]
+        elevator.blitme()
+        self.update_screen()
 
 
 if __name__ == '__main__':

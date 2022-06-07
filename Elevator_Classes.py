@@ -23,7 +23,7 @@ class Elevator:
 
     def blitme(self):
         """Draw the piece at its current location."""
-        self.image = pygame.transform.scale(self.image, (100, 100))
+        #self.image = pygame.transform.scale(self.image, (100, 100))
         self.rect = self.image.get_rect()
         self.rect.topleft = self.x, self.y
         self.screen.blit(self.image, self.rect)
