@@ -100,8 +100,9 @@ class ElevatorSimulator:
 
         
 
-        if self.elevator.image != self.elevator.state_images[0]:
+        if self.elevator.image != self.elevator.state_images[0] and self.elevator.image != self.elevator.state_images[2]:
             self.elevator.image = self.elevator.state_images[0]
+
 
         self.service_elevator = copy(self.elevator)
 
