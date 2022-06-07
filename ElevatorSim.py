@@ -9,7 +9,7 @@ import sys
 
 import pygame
 
-from Elevator_Classes import *
+from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
 from settings import Settings
 
