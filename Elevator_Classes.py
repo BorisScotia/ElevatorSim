@@ -2,6 +2,7 @@
 # Classes for Elevators
 
 import pygame
+import time
 from spritesheet import SpriteSheet
 
 pygame.init()
@@ -29,30 +30,24 @@ class Elevator:
         self.screen.blit(self.image, self.rect)
 
     def movement(self):
-        if self.floor_requests == []:
+        if self.floor_requests == [] and self.floor_requests == self.floor:
             pass
+
+
         elif self.floor_requests[0] == 0 and self.floor != 0 and self.doors == "Closed":
-            self.y -= 100 * self.floor
-            self.floor = 1
-            del (self.floor_requests[0])
-            self.state = "Idle"
-            self.doors = "Open"
+            self.state = "Moving"
+            while self.y != 400:
+                self.y += 10
 
         elif self.floor_requests[0] > self.floor and self.doors == "Closed":
             self.state = "Moving"
-            self.y += 100 * (self.floor_requests[0] // self.floor)
-            self.floor = self.floor_requests[0]
-            del (self.floor_requests[0])
-            self.state = "Idle"
-            self.doors = "Open"
+            self.y -= 10 * self.floor_requests[0] // self.floor
+
 
         elif self.floor_requests[0] < self.floor and self.doors == "Closed":
             self.state = "Moving"
-            self.y -= 100 * (self.floor // self.floor_requests[0])
-            self.floor = self.floor_requests[0]
-            del (self.floor_requests[0])
-            self.state = "Idle"
-            self.doors = "Open"
+            self.y += 10 * (self.floor // self.floor_requests[0])
+
 
 
 class ElevatorAssets:
