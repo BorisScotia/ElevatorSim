@@ -49,10 +49,13 @@ class ElevatorSimulator:
         self.service_elevator.x = 1000
         self.service_elevator.y = 400
 
+        
+
     def run_game(self):
         """Start the main loop for the game."""
         while True:
             self.update_screen()
+            
             self.check_events()
 
     def check_events(self):
@@ -70,21 +73,21 @@ class ElevatorSimulator:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
                                 print(f"Service Elevator to service (1)")
                                 self.service_elevator.floor_requests.append(1)
-                                self.moving_elevators(self.service_elevator)
+                                print(self.service_elevator.floor_requests)
+                            self.moving_elevators(self.service_elevator)
                         if 0 < index < 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
                                 print(f"Service Elevator to {button.value} ")
                                 self.service_elevator.floor_requests.append(button.value)
-                                self.moving_elevators(self.service_elevator)
+                                print(self.service_elevator.floor_requests)
+                            self.moving_elevators(self.service_elevator)
                         elif index >= 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
                                 print(f"Elevator to {button.value} ")
                                 self.elevator.floor_requests.append(button.value)
-                                self.moving_elevators(self.elevator)
-
-    def update_screen(self):
-        self.screen.fill(self.settings.bg_color)
-
+                                print(self.service_elevator.floor_requests)
+                            self.moving_elevators(self.elevator)
+    def draw_buttons(self):
         # Elevator 1
         for index, button in enumerate(self.elevator_buttons.buttons[7::]):
             button.x = index * 100
@@ -96,16 +99,10 @@ class ElevatorSimulator:
             button.y = 300
             button.blitme()
 
-        # Elevator states test
-        '''self.elevator = self.elevator_images.elevators[0]
-        self.elevator.x = 800
-        self.elevator.y = 400
-        self.elevator.blitme()
 
-        self.service_elevator = self.elevator_images.elevators[0]
-        self.service_elevator.x = 1000
-        self.service_elevator.y = 400
-        self.service_elevator.blitme()'''
+    def update_screen(self):
+        self.screen.fill(self.settings.bg_color)
+        self.draw_buttons()
 
         # Blit the elevators to the screen
         self.elevator.blitme()
@@ -136,20 +133,22 @@ class ElevatorSimulator:
         elevator.doors = "Closed"
 
     def moving_elevators(self, elevator):
-        if elevator.floor_requests[0] != elevator.floor:
-            for seconds in range(5):
-                elevator.movement()
-                self.update_screen()
-                time.sleep(1)
-            elevator.floor = elevator.floor_requests[0]
-        del elevator.floor_requests[0]
-        #print(elevator.floor_requests)
-        elevator.state = "Idle"
-        self.update_screen()
+        print(elevator.floor_requests)
+        if len(elevator.floor_requests) > 0:
+            if elevator.floor_requests[0] != elevator.floor:
+                for seconds in range(5):
+                    elevator.movement()
+                    self.update_screen()
+                    time.sleep(1)
+                elevator.floor = elevator.floor_requests[0]
+            del elevator.floor_requests[0]
+        # print(elevator.floor_requests)
+            elevator.state = "Idle"
+            self.update_screen()
 
-        self.open_animation(elevator)
-        time.sleep(1)
-        self.close_animation(elevator)
+            self.open_animation(elevator)
+            time.sleep(1)
+            self.close_animation(elevator)
 
 
 if __name__ == '__main__':
