@@ -16,7 +16,7 @@ from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
 from settings import Settings
 
-from copy import copy
+from copy import deepcopy
 
 
 class ElevatorSimulator:
@@ -39,9 +39,10 @@ class ElevatorSimulator:
         for image in self.elevator_images.elevators:
             image = pygame.transform.scale(image, (100, 100))
             self.elevator.state_images.append(image)
+            self.service_elevator.state_images.append(image)
 
-        self.elevator.image = self.elevator.state_images[0]
-        self.service_elevator = copy(self.elevator)
+        self.elevator.image = self.service_elevator.image = self.elevator.state_images[0]
+        # self.service_elevator = deepcopy(self.elevator)
 
         self.elevator.x = 800
         self.elevator.y = 400
@@ -49,13 +50,11 @@ class ElevatorSimulator:
         self.service_elevator.x = 1000
         self.service_elevator.y = 400
 
-        
-
     def run_game(self):
         """Start the main loop for the game."""
         while True:
             self.update_screen()
-            
+
             self.check_events()
 
     def check_events(self):
@@ -71,22 +70,34 @@ class ElevatorSimulator:
                     for index, button in enumerate(self.elevator_buttons.buttons):
                         if index == 0:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
-                                print(f"Service Elevator to service (1)")
+
                                 self.service_elevator.floor_requests.append(1)
+                                print(self.elevator.floor_requests)
                                 print(self.service_elevator.floor_requests)
-                            self.moving_elevators(self.service_elevator)
+                                print(f"Service Elevator to service (1)")
+                                if self.service_elevator.state != "Moving":
+                                    self.moving_service_elevator(1)
+
+
                         if 0 < index < 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
-                                print(f"Service Elevator to {button.value} ")
                                 self.service_elevator.floor_requests.append(button.value)
                                 print(self.service_elevator.floor_requests)
-                            self.moving_elevators(self.service_elevator)
+                                print(f"Service Elevator to {button.value} ")
+                                if self.service_elevator.state != "Moving":
+                                    self.moving_service_elevator(self.service_elevator.floor_requests[0])
+
+
                         elif index >= 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
-                                print(f"Elevator to {button.value} ")
                                 self.elevator.floor_requests.append(button.value)
+                                print(self.elevator.floor_requests)
                                 print(self.service_elevator.floor_requests)
-                            self.moving_elevators(self.elevator)
+                                print(f"Elevator to {button.value} ")
+                                if self.elevator.state != "Moving":
+                                    self.moving_elevator(self.elevator.floor_requests[0])
+
+
     def draw_buttons(self):
         # Elevator 1
         for index, button in enumerate(self.elevator_buttons.buttons[7::]):
@@ -99,7 +110,6 @@ class ElevatorSimulator:
             button.y = 300
             button.blitme()
 
-
     def update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self.draw_buttons()
@@ -111,13 +121,13 @@ class ElevatorSimulator:
         pygame.display.flip()
 
     def open_animation(self, elevator):
-        elevator.image = self.elevator.state_images[2]
+        elevator.image = elevator.state_images[2]
         self.update_screen()
         time.sleep(1)
-        elevator.image = self.elevator.state_images[3]
+        elevator.image = elevator.state_images[3]
         self.update_screen()
         time.sleep(1)
-        elevator.image = self.elevator.state_images[1]
+        elevator.image = elevator.state_images[1]
         self.update_screen()
         elevator.doors = "Open"
 
@@ -132,23 +142,38 @@ class ElevatorSimulator:
         self.update_screen()
         elevator.doors = "Closed"
 
-    def moving_elevators(self, elevator):
-        print(elevator.floor_requests)
-        if len(elevator.floor_requests) > 0:
-            if elevator.floor_requests[0] != elevator.floor:
-                for seconds in range(5):
-                    elevator.movement()
-                    self.update_screen()
-                    time.sleep(1)
-                elevator.floor = elevator.floor_requests[0]
-            del elevator.floor_requests[0]
+    def moving_elevator(self, floor_request):
+        del self.elevator.floor_requests[0]
+        if self.elevator.floor != floor_request:
+            for seconds in range(5):
+                self.elevator.movement(floor_request)
+                self.update_screen()
+                time.sleep(1)
+        self.elevator.floor = floor_request
         # print(elevator.floor_requests)
-            elevator.state = "Idle"
-            self.update_screen()
+        self.elevator.state = "Idle"
+        #self.update_screen()
 
-            self.open_animation(elevator)
-            time.sleep(1)
-            self.close_animation(elevator)
+        self.open_animation(self.elevator)
+        time.sleep(1)
+        self.close_animation(self.elevator)
+
+    def moving_service_elevator(self, floor_request):
+        del self.service_elevator.floor_requests[0]
+        if self.service_elevator.floor != floor_request:
+            for seconds in range(5):
+                self.service_elevator.movement(floor_request)
+                self.update_screen()
+                time.sleep(1)
+        self.service_elevator.floor = floor_request
+        # print(elevator.floor_requests)
+        self.service_elevator.state = "Idle"
+        #self.update_screen()
+
+        self.open_animation(self.service_elevator)
+        time.sleep(1)
+        self.close_animation(self.service_elevator)
+
 
 
 if __name__ == '__main__':

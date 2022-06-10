@@ -29,24 +29,24 @@ class Elevator:
         self.rect.topleft = self.x, self.y
         self.screen.blit(self.image, self.rect)
 
-    def movement(self):
-        if self.floor_requests == [] and self.floor_requests == self.floor:
+    def movement(self, floor_request):
+        if floor_request == None and floor_request == self.floor:
             pass
 
 
-        elif self.floor_requests[0] == 0 and self.floor != 0 and self.doors == "Closed":
+        elif floor_request == 0 and self.floor != 0 and self.doors == "Closed":
             self.state = "Moving"
             while self.y != 400:
                 self.y += 10
 
-        elif self.floor_requests[0] > self.floor and self.doors == "Closed":
+        elif floor_request > self.floor and self.doors == "Closed":
             self.state = "Moving"
-            self.y -= 10 * self.floor_requests[0] // self.floor
+            self.y -= 10 * floor_request // self.floor
 
 
-        elif self.floor_requests[0] < self.floor and self.doors == "Closed":
+        elif floor_request < self.floor and self.doors == "Closed":
             self.state = "Moving"
-            self.y += 10 * (self.floor // self.floor_requests[0])
+            self.y += 10 * (self.floor // floor_request)
 
 
 
