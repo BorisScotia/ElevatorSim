@@ -51,9 +51,11 @@ class ElevatorSimulator:
         self.service_elevator.x = 1000
         self.service_elevator.y = 400
 
+
     def run_game(self):
         """Start the main loop for the game."""
         while True:
+            self.intro()
             self.update_screen()
             self.check_events()
 
@@ -96,17 +98,67 @@ class ElevatorSimulator:
                                 print(f"Elevator to {button.value} ")
                                 if self.elevator.state != "Moving":
                                     self.moving_elevator(self.elevator.floor_requests[0])
-
+    #https://programmingpixels.com/handling-a-title-screen-game-flow-and-buttons-in-pygame.html
+    #Watch this for title screen
+    #Make Sprite Groups for elevator and buttons 
+    '''def intro(self):
+        # white color 
+        color = (255,255,255) 
+        
+        # light shade of the button 
+        color_light = (170,170,170) 
+        
+        # dark shade of the button 
+        color_dark = (100,100,100) 
+        
+        
+        # defining a font 
+        smallfont = pygame.font.SysFont('Corbel',35) 
+        
+        # rendering a text written in 
+        # this font 
+        text = smallfont.render('quit' , True , color) 
+        
+        while True: 
+            
+            for ev in pygame.event.get(): 
+                
+                if ev.type == pygame.QUIT: 
+                    pygame.quit() 
+                    
+                #checks if a mouse is clicked 
+                if ev.type == pygame.MOUSEBUTTONDOWN: 
+                    
+                    #if the mouse is clicked on the 
+                    # button the game is terminated 
+                    if self.settings.screen_width/2 <= mouse[0] <= self.settings.screen_width/2+140 and self.settings.screen_height/2 <= mouse[1] <= self.settings.screen_height/2+40: 
+                        pygame.quit() 
+                        
+            # fills the screen with a color 
+            self.screen.fill((60,25,60)) 
+            
+            # stores the (x,y) coordinates into 
+            # the variable as a tuple 
+            mouse = pygame.mouse.get_pos() 
+            
+            # if mouse is hovered on a button it 
+            # changes to lighter shade 
+            if self.settings.screen_width/2 <= mouse[0] <= self.settings.screen_width/2+140 and self.settings.screen_height/2 <= mouse[1] <= self.settings.screen_height/2+40: 
+                pygame.draw.rect(self.screen,color_light,[self.settings.screen_width/2,self.settings.screen_height/2,140,40]) 
+                
+            else: 
+                pygame.draw.rect(self.screen,color_dark,[self.settings.screen_width/2,self.settings.screen_height/2,140,40]) 
+            
+            # superimposing the text onto our button 
+            self.screen.blit(text , (self.settings.screen_width/2+50,self.settings.screen_height/2))''' 
 
     def draw_buttons(self):
         # Elevator 1
-        #------------MAKE SPRITE GROUP-----------------
         for index, button in enumerate(self.elevator_buttons.buttons[7::]):
             button.x = index * 100
             button.blitme()
 
         # Elevator 2
-        #------------MAKE SPRITE GROUP-----------------
         for index, button in enumerate(self.elevator_buttons.buttons[:7]):
             button.x = index * 100
             button.y = 300
