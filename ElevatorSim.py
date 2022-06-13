@@ -16,7 +16,7 @@ from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
 from settings import Settings
 
-from copy import deepcopy
+#from copy import deepcopy
 
 
 class ElevatorSimulator:
@@ -36,6 +36,7 @@ class ElevatorSimulator:
         self.service_elevator = Elevator(self)
 
         # Add Elevator states
+        #------------MAKE SPRITE GROUP-----------------
         for image in self.elevator_images.elevators:
             image = pygame.transform.scale(image, (100, 100))
             self.elevator.state_images.append(image)
@@ -54,7 +55,6 @@ class ElevatorSimulator:
         """Start the main loop for the game."""
         while True:
             self.update_screen()
-
             self.check_events()
 
     def check_events(self):
@@ -100,11 +100,13 @@ class ElevatorSimulator:
 
     def draw_buttons(self):
         # Elevator 1
+        #------------MAKE SPRITE GROUP-----------------
         for index, button in enumerate(self.elevator_buttons.buttons[7::]):
             button.x = index * 100
             button.blitme()
 
         # Elevator 2
+        #------------MAKE SPRITE GROUP-----------------
         for index, button in enumerate(self.elevator_buttons.buttons[:7]):
             button.x = index * 100
             button.y = 300
