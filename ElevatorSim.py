@@ -77,6 +77,7 @@ class ElevatorSimulator:
             text="Start",
             action=GameState.NewGame,
         )
+        #Need to add quit button to main game
         quit_btn = UIElement(
             center_position=(600, 500),
             font_size=50,
