@@ -18,6 +18,14 @@ from settings import Settings, UIElement, GameState
 
 WHITE = (255, 255, 255)
 BLUE = (173, 216, 230)
+BLACK = (0, 0, 0)
+
+
+def render_text(text, font_size, text_rgb, bg_rgb):
+    """ Returns surface with text written on """
+    font = pygame.freetype.SysFont("Courier", font_size, bold=True)
+    surface, _ = font.render(text=text, fgcolor=text_rgb, bgcolor=bg_rgb)
+    return surface.convert_alpha()
 
 
 class ElevatorSimulator:
@@ -55,12 +63,11 @@ class ElevatorSimulator:
             if self.game_state == GameState.Title:
                 self.game_state = self.title_screen()
             if self.game_state == GameState.NewGame:
-                #Need to fix this------
-                #self.game_state = self.play_game()
+                # Need to fix this------
+                # self.game_state = self.play_game()
                 self.run_game()
             if self.game_state == GameState.Quit:
                 sys.exit()
-                return
 
     def run_game(self):
         """Start the main loop for the game."""
@@ -77,7 +84,7 @@ class ElevatorSimulator:
             text="Start",
             action=GameState.NewGame,
         )
-        quit_btn = UIElement(
+        self.quit_btn = UIElement(
             center_position=(600, 500),
             font_size=50,
             bg_rgb=BLUE,
@@ -86,37 +93,24 @@ class ElevatorSimulator:
             action=GameState.Quit,
         )
 
-        buttons = pygame.sprite.RenderUpdates(start_btn, quit_btn)
+        buttons = pygame.sprite.RenderUpdates(start_btn, self.quit_btn)
 
         return self.game_loop(buttons)
-
-    # def play_game(self):
-    #     return_btn = UIElement(
-    #         center_position=(150, 750),
-    #         font_size=50,
-    #         bg_rgb=BLUE,
-    #         text_rgb=WHITE,
-    #         text="Main Menu",
-    #         action=GameState.Title,
-    #     )
-    #     button = pygame.sprite.RenderUpdates(return_btn)
-    #
-    #     return self.game_loop(button)
 
     def game_loop(self, start_buttons):
         """ Handles game loop until an action is return by a button in the
             buttons sprite renderer.
         """
         while True:
-            mouse_up = False
+            self.mouse_up = False
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
                 if event.type == pygame.MOUSEBUTTONUP and event.button == 1:
-                    mouse_up = True
+                    self.mouse_up = True
             self.screen.fill(BLUE)
             for button in start_buttons:
-                ui_action = button.update(pygame.mouse.get_pos(), mouse_up)
+                ui_action = button.update(pygame.mouse.get_pos(), self.mouse_up)
                 if ui_action is not None:
                     return ui_action
 
@@ -127,9 +121,6 @@ class ElevatorSimulator:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
-                    sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
@@ -152,8 +143,7 @@ class ElevatorSimulator:
                                 if self.service_elevator.state != "Moving":
                                     self.moving_service_elevator(self.service_elevator.floor_requests[0])
 
-
-                        elif index >= 7:
+                        if index >= 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
                                 self.elevator.floor_requests.append(button.value)
                                 print(self.elevator.floor_requests)
@@ -161,6 +151,8 @@ class ElevatorSimulator:
                                 print(f"Elevator to {button.value} ")
                                 if self.elevator.state != "Moving":
                                     self.moving_elevator(self.elevator.floor_requests[0])
+                    if self.quit_btn.rect.collidepoint(pos):
+                        sys.exit()
 
     # https://programmingpixels.com/handling-a-title-screen-game-flow-and-buttons-in-pygame.html
     # Watch this for title screen
@@ -178,13 +170,26 @@ class ElevatorSimulator:
             button.y = 300
             button.blitme()
 
+    '''def draw_elevator_text(self):
+        self.elevator_text = render_text(
+            text=f"Elevator is on floor {self.elevator.floor} \n The state is {self.elevator.state} \n The doors are "
+                 f"{self.elevator.doors}",
+            font_size= 15,
+            text_rgb= BLACK,
+            bg_rgb=WHITE
+        )
+        self.screen.blit(self.elevator_text, (800, 600))'''
+
     def update_screen(self):
         self.screen.fill(self.settings.bg_color)
         self.draw_buttons()
 
+        self.quit_btn.draw(self.screen)
+        self.quit_btn.update(pygame.mouse.get_pos(), self.mouse_up)
         # Blit the elevators to the screen
         self.elevator.blitme()
         self.service_elevator.blitme()
+        #self.draw_elevator_text()
 
         pygame.display.flip()
 
