@@ -10,7 +10,7 @@ import sys
 
 import pygame
 
-import time
+import threading
 
 from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
@@ -36,6 +36,7 @@ class ElevatorSimulator:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
         self.game_state = GameState.Title
+        self.event = threading.Event()
 
         self.screen = pygame.display.set_mode((self.settings.screen_width, self.settings.screen_height))
         pygame.display.set_caption("Elevator Simulator")
@@ -157,6 +158,8 @@ class ElevatorSimulator:
     # https://programmingpixels.com/handling-a-title-screen-game-flow-and-buttons-in-pygame.html
     # Watch this for title screen
     # Make Sprite Groups for elevator and buttons
+    #https://realpython.com/python-sleep/
+    #Read for sleep
 
     def draw_buttons(self):
         # Elevator 1
@@ -196,10 +199,10 @@ class ElevatorSimulator:
     def open_animation(self, elevator):
         elevator.image = elevator.state_images[2]
         self.update_screen()
-        time.sleep(1)
+        self.event.wait(1)
         elevator.image = elevator.state_images[3]
         self.update_screen()
-        time.sleep(1)
+        self.event.wait(1)
         elevator.image = elevator.state_images[1]
         self.update_screen()
         elevator.doors = "Open"
@@ -207,10 +210,10 @@ class ElevatorSimulator:
     def close_animation(self, elevator):
         elevator.image = self.elevator.state_images[3]
         self.update_screen()
-        time.sleep(1)
+        self.event.wait(1)
         elevator.image = self.elevator.state_images[2]
         self.update_screen()
-        time.sleep(1)
+        self.event.wait(1)
         elevator.image = self.elevator.state_images[0]
         self.update_screen()
         elevator.doors = "Closed"
@@ -221,14 +224,14 @@ class ElevatorSimulator:
             for seconds in range(5):
                 self.elevator.movement(floor_request)
                 self.update_screen()
-                time.sleep(1)
+                self.event.wait(1)
         self.elevator.floor = floor_request
         # print(elevator.floor_requests)
         self.elevator.state = "Idle"
         # self.update_screen()
 
         self.open_animation(self.elevator)
-        time.sleep(1)
+        self.event.wait(1)
         self.close_animation(self.elevator)
 
     def moving_service_elevator(self, floor_request):
@@ -237,14 +240,14 @@ class ElevatorSimulator:
             for seconds in range(5):
                 self.service_elevator.movement(floor_request)
                 self.update_screen()
-                time.sleep(1)
+                self.event.wait(1)
         self.service_elevator.floor = floor_request
         # print(elevator.floor_requests)
         self.service_elevator.state = "Idle"
         # self.update_screen()
 
         self.open_animation(self.service_elevator)
-        time.sleep(1)
+        self.event.wait(1)
         self.close_animation(self.service_elevator)
 
 
