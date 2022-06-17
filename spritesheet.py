@@ -1,14 +1,8 @@
 # This class handles sprite sheets
-# This was taken from www.scriptefun.com/transcript-2-using
-# sprite-sheets-and-drawing-the-background
-# I've added some code to fail if the file wasn't found..
-# Note: When calling images_at the rect is the format:
-# (x, y, x + offset, y + offset)
 
 # Additional notes
 # - Further adaptations from https://www.pygame.org/wiki/Spritesheet
-# - Cleaned up overall formatting.
-# - Updated from Python 2 -> Python 3.
+
 
 import pygame
 
