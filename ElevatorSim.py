@@ -2,7 +2,6 @@
 # Elevator Simulation Main FIle
 # Cumulative Task
 
-# https://ehmatthes.github.io/pcc_2e/beyond_pcc/pygame_sprite_sheets/
 # https://github.com/BorisScotia/ElevatorSim
 
 
@@ -16,6 +15,7 @@ from Elevator_Classes import ElevatorAssets, ElevatorButtons, Elevator
 
 from settings import Settings, UIElement, GameState
 
+#Constants
 WHITE = (255, 255, 255)
 BLUE = (173, 216, 230)
 BLACK = (0, 0, 0)
@@ -126,11 +126,10 @@ class ElevatorSimulator:
                     for index, button in enumerate(self.elevator_buttons.buttons):
                         if index == 0:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
-
                                 self.service_elevator.floor_requests.append(1)
-                                #print(self.elevator.floor_requests)
-                                #print(self.service_elevator.floor_requests)
                                 print(f"Service Elevator to service (1)")
+                                if self.service_elevator.state != "Moving":
+                                    self.moving_service_elevator(1)
 
 
                         if 0 < index < 7:
@@ -151,12 +150,6 @@ class ElevatorSimulator:
                                     self.moving_elevator(self.elevator.floor_requests[0])
                     if self.quit_btn.rect.collidepoint(pos):
                         sys.exit()
-
-    # https://programmingpixels.com/handling-a-title-screen-game-flow-and-buttons-in-pygame.html
-    # Watch this for title screen
-    # Make Sprite Groups for elevator and buttons
-    #https://realpython.com/python-sleep/
-    #Read for sleep
 
     def draw_buttons(self):
         """Draws buttons"""
@@ -213,10 +206,7 @@ class ElevatorSimulator:
         self.elevator.blitme()
         self.service_elevator.blitme()
 
-        if self.service_elevator.state != "Moving" and len(self.service_elevator.floor_requests) > 1:
-            self.moving_service_elevator(self.service_elevator.floor_requests[0])
-        if self.elevator.state != "Moving" and len(self.elevator.floor_requests) > 1:
-            self.moving_elevator(self.elevator.floor_requests[0])
+
 
         pygame.display.flip()
 
@@ -266,9 +256,9 @@ class ElevatorSimulator:
                 self.update_screen()
                 self.event.wait(1)
         self.service_elevator.floor = floor_request
-        # print(elevator.floor_requests)
+
         self.service_elevator.state = "Idle"
-        # self.update_screen()
+
 
         self.open_animation(self.service_elevator)
         self.event.wait(1)
@@ -276,5 +266,6 @@ class ElevatorSimulator:
 
 
 if __name__ == '__main__':
+    """Runs the game"""
     elevator_game = ElevatorSimulator()
     elevator_game.run_game()
