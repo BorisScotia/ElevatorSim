@@ -47,7 +47,6 @@ class ElevatorSimulator:
         self.service_elevator = Elevator(self)
 
         # Add Elevator states
-        # ------------MAKE SPRITE GROUP-----------------
         for image in self.elevator_images.elevators:
             image = pygame.transform.scale(image, (100, 100))
             self.elevator.state_images.append(image)
@@ -64,8 +63,6 @@ class ElevatorSimulator:
             if self.game_state == GameState.Title:
                 self.game_state = self.title_screen()
             if self.game_state == GameState.NewGame:
-                # Need to fix this------
-                # self.game_state = self.play_game()
                 self.run_game()
             if self.game_state == GameState.Quit:
                 sys.exit()
@@ -86,7 +83,7 @@ class ElevatorSimulator:
             action=GameState.NewGame,
         )
         self.quit_btn = UIElement(
-            center_position=(600, 500),
+            center_position=(600, 700),
             font_size=50,
             bg_rgb=BLUE,
             text_rgb=WHITE,
@@ -119,6 +116,7 @@ class ElevatorSimulator:
             pygame.display.flip()
 
     def check_events(self):
+        """Handles Events"""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -130,16 +128,15 @@ class ElevatorSimulator:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
 
                                 self.service_elevator.floor_requests.append(1)
-                                print(self.elevator.floor_requests)
-                                print(self.service_elevator.floor_requests)
+                                #print(self.elevator.floor_requests)
+                                #print(self.service_elevator.floor_requests)
                                 print(f"Service Elevator to service (1)")
-                                if self.service_elevator.state != "Moving":
-                                    self.moving_service_elevator(1)
+
 
                         if 0 < index < 7:
                             if self.elevator_buttons.buttons[index].rect.collidepoint(pos):
                                 self.service_elevator.floor_requests.append(button.value)
-                                print(self.service_elevator.floor_requests)
+                                #print(self.service_elevator.floor_requests)
                                 print(f"Service Elevator to {button.value} ")
                                 if self.service_elevator.state != "Moving":
                                     self.moving_service_elevator(self.service_elevator.floor_requests[0])
@@ -162,6 +159,7 @@ class ElevatorSimulator:
     #Read for sleep
 
     def draw_buttons(self):
+        """Draws buttons"""
         # Elevator 1
         for index, button in enumerate(self.elevator_buttons.buttons[7::]):
             button.x = index * 100
@@ -173,30 +171,57 @@ class ElevatorSimulator:
             button.y = 300
             button.blitme()
 
-    '''def draw_elevator_text(self):
-        self.elevator_text = render_text(
-            text=f"Elevator is on floor {self.elevator.floor} \n The state is {self.elevator.state} \n The doors are "
-                 f"{self.elevator.doors}",
-            font_size= 15,
+    def draw_elevator_text(self):
+        """Renders text"""
+        elevator_text = render_text(
+            text=f"Elevator is on floor {self.elevator.floor}, the doors are {self.elevator.doors}",
+            font_size= 30,
             text_rgb= BLACK,
-            bg_rgb=WHITE
+            bg_rgb=BLUE
         )
-        self.screen.blit(self.elevator_text, (800, 600))'''
+        service_elevator_text = render_text(
+            text=f"Service Elevator is on floor {self.service_elevator.floor}, the doors are {self.service_elevator.doors}",
+            font_size=30,
+            text_rgb=BLACK,
+            bg_rgb=BLUE
+        )
+        elevator_basic_text = render_text(
+            text= "Elevator",
+            font_size= 40,
+            text_rgb= BLACK,
+            bg_rgb=BLUE
+        )
+        service_text = render_text(
+            text= "Service Elevator",
+            font_size= 40,
+            text_rgb= BLACK,
+            bg_rgb= BLUE
+        )
+        self.screen.blit(elevator_text, (5, 200))
+        self.screen.blit(service_elevator_text, (15, 550))
+        self.screen.blit(elevator_basic_text, (250, 120))
+        self.screen.blit(service_text, (200, 420))
 
     def update_screen(self):
+        """Draws everything to screen"""
         self.screen.fill(self.settings.bg_color)
         self.draw_buttons()
-
+        self.draw_elevator_text()
         self.quit_btn.draw(self.screen)
         self.quit_btn.update(pygame.mouse.get_pos(), self.mouse_up)
         # Blit the elevators to the screen
         self.elevator.blitme()
         self.service_elevator.blitme()
-        #self.draw_elevator_text()
+
+        if self.service_elevator.state != "Moving" and len(self.service_elevator.floor_requests) > 1:
+            self.moving_service_elevator(self.service_elevator.floor_requests[0])
+        if self.elevator.state != "Moving" and len(self.elevator.floor_requests) > 1:
+            self.moving_elevator(self.elevator.floor_requests[0])
 
         pygame.display.flip()
 
     def open_animation(self, elevator):
+        elevator.doors = "Open"
         elevator.image = elevator.state_images[2]
         self.update_screen()
         self.event.wait(1)
@@ -205,7 +230,6 @@ class ElevatorSimulator:
         self.event.wait(1)
         elevator.image = elevator.state_images[1]
         self.update_screen()
-        elevator.doors = "Open"
 
     def close_animation(self, elevator):
         elevator.image = self.elevator.state_images[3]

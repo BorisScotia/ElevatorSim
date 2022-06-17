@@ -41,7 +41,7 @@ class Elevator:
 
         elif floor_request > self.floor and self.doors == "Closed":
             self.state = "Moving"
-            self.y -= 10 * floor_request // self.floor
+            self.y -= 10 * (floor_request // self.floor)
 
 
         elif floor_request < self.floor and self.doors == "Closed":
