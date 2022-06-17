@@ -1,4 +1,6 @@
+#Boris Sergienko (781809)
 # Screen size and colours and menu
+#Settings and other screen elements
 import pygame
 from enum import Enum
 
@@ -79,4 +81,3 @@ class GameState(Enum):
     Quit = -1
     Title = 0
     NewGame = 1
-
